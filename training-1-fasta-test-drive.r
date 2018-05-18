@@ -32,7 +32,7 @@ library(rentrez)
 # Search for a seq, this returns many hits tho so sticking with ape
 entrez_search(db="nucleotide", term="human superoxide dismutase")
 
-## ================== FASTA Processing ========================= ##
+## ================== FASTA Processing - NT characteristics ========================= ##
 #Take the first sequence (there's only one but this removes header)
 CloningVector <- AB003468[[1]]
 
@@ -47,8 +47,8 @@ GC <- GC(CloningVector)
 
 #That was only the global GC though, let's look at smaller patches. Window of 200
 GCwindow <- seq(1,length(CloningVector)-200, by=200)
-n <- length(GCwindow)
-Chunks <- numeric(n)
+n <- length(GCwindow) # how many windows are there
+Chunks <- numeric(n) # make an empty variable of that size
 
 #For loop to compute GC content per chunk
 for (i in 1:n) {
@@ -56,3 +56,28 @@ for (i in 1:n) {
   chunkGC <- GC(chunk)
   Chunks[i] <- chunkGC
 }
+
+## ================== Plotting the FASTA characteristics ========================= ##
+
+plot(GCwindow, Chunks, type="b", xlab="NT start position", ylab="GC content")
+
+
+## ================== Create a function to display GC content ========================= ##
+# function to take seq and window size and plot GC content
+slidingwindowGCplot <- function(windowsize, inputseq)
+{
+  GCwindow <- seq(1, length(inputseq)-windowsize, by=windowsize)
+  n <- length(GCwindow) # find window size
+  Chunks <- numeric(n) # make blank vector of that size
+  
+  #iterate through the windows of the seq and calc GC content
+  for (i in 1:n) {
+    chunk <- inputseq[GCwindow[i]:(GCwindow[i]+windowsize-1)]
+    Chunks[i] <- GC(chunk)
+  }
+  
+  #plot the GC content of the windows
+  plot(GCwindow, Chunks, type="b", xlab="NT start pos", ylab = "GC Content")
+  
+}
+
