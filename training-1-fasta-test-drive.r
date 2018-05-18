@@ -77,7 +77,8 @@ slidingwindowGCplot <- function(windowsize, inputseq)
   }
   
   #plot the GC content of the windows
-  plot(GCwindow, Chunks, type="b", xlab="NT start pos", ylab = "GC Content")
+  plot(GCwindow, Chunks, type="b", xlab="NT start pos", ylab = "GC Content", 
+       main=paste("GC plot with window-size", windowsize))
   
 }
 
