@@ -2,7 +2,7 @@
 # An R Script to work with Fasta files, to learn how to do so
 # Ian Coleman
 
-## ================== Import Local Fasta ========================= ##
+## ================== Import Local Protein Fasta ========================= ##
 #install.packages("seqinr")
 library(seqinr)
 
@@ -26,7 +26,7 @@ write.dna(AB003468, file="AB003648.fasta", format="fasta", append=
 ## ================== Import GenBank Fasta via rentrez package ========================= ##
 # Rentrez allows us to accress data in formats other than binary
 # and by means other than accession number
-install.packages("rentrez") 
+#install.packages("rentrez") 
 library(rentrez)
 
 # Search for a seq, this returns many hits tho so sticking with ape
@@ -81,4 +81,52 @@ slidingwindowGCplot <- function(windowsize, inputseq)
        main=paste("GC plot with window-size", windowsize))
   
 }
+
+## ================== Protein Seq Stats ========================= ##
+#install.packages("Peptides")
+library(Peptides)
+
+# Return a breakdown of AA by type (size, side chains, hydrophob, charge, reponse to pH7)
+aaComp(cox1[1]) # 1 seq
+aaComp(cox1) # All seqs
+
+# Aliphatic index - indicator of thermostability of globular proteins
+aIndex(cox1)
+
+# predict protein charge NB check peptides doc for right pkscale
+charge(seq1, pH=7, pKscale = "Lehninger") 
+charge(cox1)
+
+# hydrophobicity
+hydrophobicity(seq1) 
+
+# function to plot hydrophobicity by window
+slidingwindowHydrophobicityplot <- function(windowsize, inputseq)
+{
+  print(windowsize)
+  # browser()
+  hydrophobwindow <- seq(1, length(inputseq)-windowsize, by=windowsize)
+  n <- length(hydrophobwindow) # find window size
+  Chunks <- numeric(n) # make blank vector of that size
+  
+  #iterate through the windows of the seq and calc GC content
+  for (i in 1:n) {
+    chunk <- inputseq[hydrophobwindow[i]:(hydrophobwindow[i]+windowsize-1)]
+    chunkPhobicity <- hydrophobicity(paste(chunk, collapse="")) #collapsing to str as hydrophobicity expects it
+    Chunks[i] <- chunkPhobicity
+  }
+  
+  #plot the GC content of the windows
+  plot(hydrophobwindow, Chunks, type="b", xlab="AA start pos", ylab = "hydrophobicity", 
+       main=paste("hydrophobicity plot with window-size", windowsize))
+  
+}
+
+## ================== Debugging ========================= ##
+
+options(error = browser) # this turns on auto interactive-mode upon error 
+options(error = recover) # same but you can enter any line in the stacktrace
+# (n)ext (s)tep-in (f)inish (q)uit and Enter returns to the last linen
+options(error = NULL) # this turns ^ it off
+# browser() - this on a given line will jump interactive to there upon error
 
