@@ -33,7 +33,7 @@ pairAlignString <- BStringSet(c(toString(subject(pairAlign)), toString(pattern(p
 writeXStringSet(pairAlignString, "aligned.txt", format="FASTA")
 
 
-## ================== DotPlot Alignment ========================= ##
+## ================== DotPlot Pairwise Alignment ========================= ##
 
 # Get two protein sequences (less noisy on dot plot than NTs)
 coxGenes <- read.fasta(file="fastas/cox1multi.fasta", seqtype="AA")
@@ -51,3 +51,25 @@ dotPlot(cox1[1:100], cox2[1:100], wsize = 3, wstep = 3, nmatch = 3, main = "Huma
         wstep = 3, nmatch = 3")
 
 # Three main types of alignment (i) Global (ii) Local (iii) Overlap - for overlapping seqs
+
+
+## ================== Multiple Seq Alignment ========================= ##
+# Import the bioconductor lib msa
+source("https://bioconductor.org/biocLite.R")
+biocLite("Biostrings")
+biocLite("msa")
+setwd("~/Documents/r-scripts")
+library(Biostrings)
+library(msa)
+
+# read in fastas as 'StringSets' a bioconductor class
+coxAA <- readAAStringSet("fastas/cox1multi.fasta")
+prokDNA <- readDNAStringSet("fastas/prok.fasta")
+
+# Note: there are 4 types of string set DNAStringSet RNA AA B
+# The first three are specified type, B can be any type
+
+# Now to MSA
+coxAligned <- msa(coxAA)
+
+
