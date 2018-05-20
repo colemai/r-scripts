@@ -5,7 +5,7 @@
 
 # Fetch bioconductor packages
 source("https://bioconductor.org/biocLite.R")
-biocLite("Biostrings")
+#biocLite("Biostrings")
 
 # Libraries
 library(Biostrings)
@@ -35,7 +35,19 @@ writeXStringSet(pairAlignString, "aligned.txt", format="FASTA")
 
 ## ================== DotPlot Alignment ========================= ##
 
+# Get two protein sequences (less noisy on dot plot than NTs)
 coxGenes <- read.fasta(file="fastas/cox1multi.fasta", seqtype="AA")
 cox1 <- as.character(coxGenes[[1]])
 cox2 <- as.character(coxGenes[[2]])
 
+dotPlot(cox1, cox2, main="Human vs Mouse COX1 Dotplot")
+
+# a windowed dotplot is easier to interpret:
+dotPlot(cox1, cox2, wsize = 3, wstep = 3, nmatch = 3, main = "Human vs Mouse Cox1 Dotplot\nwsize = 3,
+        wstep = 3, nmatch = 3")
+
+# First 100 residues only
+dotPlot(cox1[1:100], cox2[1:100], wsize = 3, wstep = 3, nmatch = 3, main = "Human vs Mouse Cox1 Dotplot\nwsize = 3,
+        wstep = 3, nmatch = 3")
+
+# Three main types of alignment (i) Global (ii) Local (iii) Overlap - for overlapping seqs
